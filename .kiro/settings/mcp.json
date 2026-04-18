@@ -2,7 +2,7 @@
   "mcpServers": {
     "character-db": {
       "command": "node",
-      "args": ["./mcp-servers/character-db/dist/server.js"],
+      "args": ["./mcp-servers/character-db/server.mjs"],
       "env": {
         "DATABASE_URL": "${DATABASE_URL}"
       },

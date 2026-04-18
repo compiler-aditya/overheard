@@ -47,9 +47,13 @@ describe("loadAllSpecs", () => {
     }
   });
 
-  it("loads at least one pairing spec with valid signatures", async () => {
+  it("loads all 8 pairing specs with valid signatures", async () => {
     const specs = await loadAllSpecs({ force: true });
-    expect(specs.pairings.size).toBeGreaterThanOrEqual(1);
+    expect(specs.pairings.size).toBe(8);
+    for (const [slug, spec] of specs.pairings) {
+      expect(typeof spec.signature_a, `${slug} signature_a`).toBe("string");
+      expect(typeof spec.signature_b, `${slug} signature_b`).toBe("string");
+    }
     const candleMirror = specs.pairings.get("candle-mirror");
     expect(candleMirror?.signature_a).toBe("candle");
     expect(candleMirror?.signature_b).toBe("mirror");

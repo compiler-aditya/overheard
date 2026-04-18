@@ -36,6 +36,17 @@ export function Camera() {
     }
   }, [response?.ambient_url]);
 
+  // Dramatic reveal: on a pair unlock, redirect to the dedicated page after a short beat.
+  useEffect(() => {
+    if (response?.character?.kind === "pairing") {
+      const id = response.character.id;
+      const t = setTimeout(() => {
+        window.location.href = `/pair/${id}`;
+      }, 2500);
+      return () => clearTimeout(t);
+    }
+  }, [response?.character?.kind, response?.character?.id]);
+
   async function handleFile(file: File) {
     setBusy(true);
     setResponse(null);

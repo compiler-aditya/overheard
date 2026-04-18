@@ -1,0 +1,17 @@
+{
+  "name": "overheard-character-db-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server exposing the Overheard character database to Kiro.",
+  "main": "server.mjs",
+  "type": "module",
+  "bin": {
+    "overheard-character-db": "./server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
+}
