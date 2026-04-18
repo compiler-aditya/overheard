@@ -21,7 +21,7 @@ Target: 60-second master; platform cuts derived from the master.
 | 20–28 s | **Coffee mug + laptop** (same session) | A different moment, same user. Mug on laptop. | "Third one today. Worried about you." |
 | 28–40 s | **Hero landmark — wide shot** | Wide of Rajwada / Taj Mahal / banyan tree. Phone capture. | "Quieter, once. The river came closer then. I could hear it at night." |
 | 40–50 s | **Pair setup** | Candle in frame. Mirror added. User photographs both together. A pause. Then a third voice. | "You found me. What do you want to know?" |
-| 50–60 s | Logo + tagline | Fade to dark. | "Overheard. The world has them if you listen." |
+| 50–60 s | Logo + tagline | Fade to dark. | "Auris. The world has them if you listen." |
 
 ## Hook lines for the first 3 seconds (choose one)
 

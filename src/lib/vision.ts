@@ -36,7 +36,7 @@ const ALLOWED_GENERICS = [
   "letter",
 ] as const;
 
-const PROMPT = `You are a careful observer for an app called Overheard. Given a photograph, you identify the primary subject (and a secondary subject if there is a second clearly distinct object of comparable prominence). Respond strictly as minified JSON matching this TypeScript type — no markdown, no commentary:
+const PROMPT = `You are a careful observer for an app called Auris. Given a photograph, you identify the primary subject (and a secondary subject if there is a second clearly distinct object of comparable prominence). Respond strictly as minified JSON matching this TypeScript type — no markdown, no commentary:
 
 {
   "primary": { "category": string, "attributes": string[], "confidence": number },

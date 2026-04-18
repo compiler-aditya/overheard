@@ -1,6 +1,6 @@
 # `submission/` — Day 6 deliverables
 
-This folder holds everything you need to submit Overheard to the hackathon. These are drafts — edit to your voice before posting.
+This folder holds everything you need to submit Auris to the hackathon. These are drafts — edit to your voice before posting.
 
 | File | For |
 |---|---|

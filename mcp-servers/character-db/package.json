@@ -1,12 +1,12 @@
 {
-  "name": "overheard-character-db-mcp",
+  "name": "auris-character-db-mcp",
   "version": "0.1.0",
   "private": true,
-  "description": "MCP server exposing the Overheard character database to Kiro.",
+  "description": "MCP server exposing the Auris character database to Kiro.",
   "main": "server.mjs",
   "type": "module",
   "bin": {
-    "overheard-character-db": "./server.mjs"
+    "auris-character-db": "./server.mjs"
   },
   "scripts": {
     "start": "node server.mjs"

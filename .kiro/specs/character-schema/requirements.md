@@ -1,7 +1,7 @@
 # Character schema — requirements
 
 ## Problem
-Overheard will host dozens of distinct characters across three types: category archetypes (12), famous landmarks (8), and pair-unlock voices (8). Each must be hand-authored for personality, yet they all flow through a single pipeline: vision result → spec match → voice generation → greeting → conversation. Without a shared schema, every new character becomes a special case, pipeline code forks, and we lose the benefit of spec-driven development.
+Auris will host dozens of distinct characters across three types: category archetypes (12), famous landmarks (8), and pair-unlock voices (8). Each must be hand-authored for personality, yet they all flow through a single pipeline: vision result → spec match → voice generation → greeting → conversation. Without a shared schema, every new character becomes a special case, pipeline code forks, and we lose the benefit of spec-driven development.
 
 ## Goal
 Define one canonical schema every character inherits from. Make it small enough to author a new character in under 10 minutes, rich enough to drive Voice Design, Conversational AI, and Sound Effects without custom per-character code.

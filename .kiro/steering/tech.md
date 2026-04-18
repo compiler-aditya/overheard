@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Overheard — tech stack steering
+# Auris — tech stack steering
 
 Kiro should default to these choices unless there is a compelling reason to deviate. Deviations must be flagged in chat.
 

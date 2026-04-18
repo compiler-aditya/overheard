@@ -1,6 +1,6 @@
-# overheard-character-db MCP server
+# auris-character-db MCP server
 
-A minimal stdio [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the Overheard character database to Kiro. It gives the Kiro agent read-only answers to:
+A minimal stdio [Model Context Protocol](https://modelcontextprotocol.io) server that exposes the Auris character database to Kiro. It gives the Kiro agent read-only answers to:
 
 - "Which characters already exist?"
 - "Show me the full spec record for `rajwada-indore`."

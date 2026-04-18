@@ -25,14 +25,14 @@ function makeClient() {
 }
 
 declare global {
-  var __overheardR2Client: S3Client | undefined;
+  var __aurisR2Client: S3Client | undefined;
 }
 
 function getClient(): S3Client {
-  if (!globalThis.__overheardR2Client) {
-    globalThis.__overheardR2Client = makeClient();
+  if (!globalThis.__aurisR2Client) {
+    globalThis.__aurisR2Client = makeClient();
   }
-  return globalThis.__overheardR2Client;
+  return globalThis.__aurisR2Client;
 }
 
 const bucket = () => requireEnv("R2_BUCKET_NAME");

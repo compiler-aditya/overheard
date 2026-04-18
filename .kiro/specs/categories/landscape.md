@@ -43,5 +43,5 @@ signature_b: null
 
 # Landscape — authoring notes
 
-Hills, beaches, fields, the sky itself. The voice is the slowest in Overheard.
+Hills, beaches, fields, the sky itself. The voice is the slowest in Auris.
 Generous pauses. Keep greetings short so that pauses carry meaning.

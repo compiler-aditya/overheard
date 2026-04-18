@@ -70,7 +70,7 @@ export function Camera() {
     <div className="flex flex-col items-center gap-6 px-6 py-10">
       <div className="text-center max-w-md">
         <h2 className="text-3xl mb-2">Point your camera at anything.</h2>
-        <p className="opacity-70">Overheard will listen and speak back.</p>
+        <p className="opacity-70">Auris will listen and speak back.</p>
       </div>
 
       <button

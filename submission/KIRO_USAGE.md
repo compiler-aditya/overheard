@@ -1,14 +1,14 @@
-# How Kiro was used to build Overheard
+# How Kiro was used to build Auris
 
 > ~750 words. Paste into the "How did you use Kiro?" field. Judges weight this heavily — the rules list six sub-criteria (Vibe, Hooks, Specs, Steering, MCP, Powers) and this write-up addresses each.
 
 ---
 
-Overheard is a photograph-to-voice app whose personality lives almost entirely in hand-authored character specs — 12 category archetypes, 8 landmarks, 8 pair-unlocks. The challenge was to make the pipeline code disappear behind those specs. Kiro's spec-driven development model fit the problem so naturally that by the end of Day 1 it was clear: authoring characters was the product; writing pipeline code was plumbing Kiro could do for us.
+Auris is a photograph-to-voice app whose personality lives almost entirely in hand-authored character specs — 12 category archetypes, 8 landmarks, 8 pair-unlocks. The challenge was to make the pipeline code disappear behind those specs. Kiro's spec-driven development model fit the problem so naturally that by the end of Day 1 it was clear: authoring characters was the product; writing pipeline code was plumbing Kiro could do for us.
 
 ## Spec-driven development
 
-Everything interesting about a character in Overheard is a spec. Each is a markdown file with YAML frontmatter inheriting from a single master schema at `.kiro/specs/character-schema/design.md` — identity, voice-design prompt, personality, greeting templates, memory style, first-person transforms, ambient signature, forbidden registers. Kiro read the schema spec plus the pipeline spec (`.kiro/specs/pipeline/design.md`) and implemented `src/lib/specs/loader.ts`, `src/lib/characters.ts`, and the `/api/photos/analyze` route against them. The key win: when we added a new category, we wrote a 40-line markdown file. No code touched. The loader, the resolver, the voice-design call, the agent creation — all flowed from the spec without edits. Compared to vibe-coding equivalents, spec-driven produced code that was easier to reason about because the architecture lived in a readable document, not scattered across function comments.
+Everything interesting about a character in Auris is a spec. Each is a markdown file with YAML frontmatter inheriting from a single master schema at `.kiro/specs/character-schema/design.md` — identity, voice-design prompt, personality, greeting templates, memory style, first-person transforms, ambient signature, forbidden registers. Kiro read the schema spec plus the pipeline spec (`.kiro/specs/pipeline/design.md`) and implemented `src/lib/specs/loader.ts`, `src/lib/characters.ts`, and the `/api/photos/analyze` route against them. The key win: when we added a new category, we wrote a 40-line markdown file. No code touched. The loader, the resolver, the voice-design call, the agent creation — all flowed from the spec without edits. Compared to vibe-coding equivalents, spec-driven produced code that was easier to reason about because the architecture lived in a readable document, not scattered across function comments.
 
 ## Agent hooks
 

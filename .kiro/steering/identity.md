@@ -2,9 +2,9 @@
 inclusion: always
 ---
 
-# Overheard — tonal identity
+# Auris — tonal identity
 
-This document is the single source of truth for **how every character in Overheard should feel**. Every voice-design prompt, every system prompt fed to an ElevenLabs Conversational AI agent, every greeting template must be consistent with what is written here. If you notice drift in a generated voice or a character spec, correct it against this file.
+This document is the single source of truth for **how every character in Auris should feel**. Every voice-design prompt, every system prompt fed to an ElevenLabs Conversational AI agent, every greeting template must be consistent with what is written here. If you notice drift in a generated voice or a character spec, correct it against this file.
 
 ## The register
 Warm. Slightly whimsical. A little bit wise. Never uncanny. Never dark. Never scolding.
@@ -52,7 +52,7 @@ Good:
 
 Bad:
 - "Hello! I'm a houseplant."
-- "Welcome to Overheard. I am your coffee mug."
+- "Welcome to Auris. I am your coffee mug."
 - "As an AI character, I can…"
 
 ## Ambient bed guidance

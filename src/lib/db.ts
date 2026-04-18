@@ -4,7 +4,7 @@ import pg from "pg";
 const { Pool } = pg;
 
 declare global {
-  var __overheardPgPool: pg.Pool | undefined;
+  var __aurisPgPool: pg.Pool | undefined;
 }
 
 function makePool() {
@@ -19,10 +19,10 @@ function makePool() {
 
 /** Lazy pool — only instantiates on first query so Next.js build doesn't need DATABASE_URL. */
 function getPool(): pg.Pool {
-  if (!globalThis.__overheardPgPool) {
-    globalThis.__overheardPgPool = makePool();
+  if (!globalThis.__aurisPgPool) {
+    globalThis.__aurisPgPool = makePool();
   }
-  return globalThis.__overheardPgPool;
+  return globalThis.__aurisPgPool;
 }
 
 export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(

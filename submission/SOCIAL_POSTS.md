@@ -25,7 +25,7 @@
 
 ## LinkedIn
 
-> **Overheard — spec-driven development for a voice-first app**
+> **Auris — spec-driven development for a voice-first app**
 >
 > For the ElevenLabs × Kiro hackathon, I built an app that turns any photograph into a character with its own voice, personality, and memory. A houseplant notices you haven't been home. The Taj Mahal speaks as itself. Two objects photographed together sometimes summon a third, emergent voice.
 >
@@ -66,7 +66,7 @@
 
 **Discord/Slack message template — ethical, no vote-buying:**
 
-> Hey folks — I just submitted my Overheard app to the ElevenLabs × Kiro hackathon. You photograph any object and hear it speak in a distinctive voice; two objects together can summon a rare third voice. If you try it and enjoy it, an emoji react on the submission page really helps. Not asking for votes — just honest eyes. [Submission link]
+> Hey folks — I just submitted my Auris app to the ElevenLabs × Kiro hackathon. You photograph any object and hear it speak in a distinctive voice; two objects together can summon a rare third voice. If you try it and enjoy it, an emoji react on the submission page really helps. Not asking for votes — just honest eyes. [Submission link]
 
 Post in:
 - ElevenHacks Discord (primary)

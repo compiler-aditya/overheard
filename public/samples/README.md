@@ -1,6 +1,6 @@
 # Sample photos for judges
 
-Drop reference photos here for judges who want to test Overheard without access to a live subject.
+Drop reference photos here for judges who want to test Auris without access to a live subject.
 
 Suggested set:
 - `houseplant.jpg` — a leafy houseplant on a desk

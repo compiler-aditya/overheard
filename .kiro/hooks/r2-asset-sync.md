@@ -15,7 +15,7 @@ node ./scripts/sync-r2-assets.mjs
 ```
 
 ## Behavior (implemented in scripts/sync-r2-assets.mjs)
-1. Walks `/tmp/overheard-preview-*.mp3`. For each, uploads to `r2://${R2_BUCKET_NAME}/previews/<slug>.mp3`.
+1. Walks `/tmp/auris-preview-*.mp3`. For each, uploads to `r2://${R2_BUCKET_NAME}/previews/<slug>.mp3`.
 2. Lists the bucket and reports any specs in `.kiro/specs/` that have no corresponding ambient audio in R2 (missing).
 3. Reports any orphaned R2 objects whose slug no longer exists in any spec (stale).
 

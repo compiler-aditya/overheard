@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Overheard — file & directory conventions
+# Auris — file & directory conventions
 
 ## Top-level layout
 ```

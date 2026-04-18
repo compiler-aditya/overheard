@@ -12,7 +12,7 @@ Every pair spec declares two object signatures (`signature_a` and `signature_b`)
 
 ## Prompt to the Kiro agent
 
-You just observed a save to `${FILE_PATH}`, which is a Overheard pairing spec. Do the following:
+You just observed a save to `${FILE_PATH}`, which is a Auris pairing spec. Do the following:
 
 1. Parse the YAML frontmatter. Extract `slug`, `signature_a`, `signature_b`.
 2. Check whether each signature matches:

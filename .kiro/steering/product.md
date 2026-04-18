@@ -2,13 +2,13 @@
 inclusion: always
 ---
 
-# Overheard — product steering
+# Auris — product steering
 
 ## One-line pitch
 Photograph anything. Hear what it has to say — and sometimes, when two things are in the frame together, a third voice neither object has alone appears.
 
-## What Overheard is
-A voice-first web app where any photograph becomes a character with its own voice, personality, and memory. A user snaps a photo of an object; Overheard identifies what it is and speaks as that object. Everything remembered is remembered across sessions.
+## What Auris is
+A voice-first web app where any photograph becomes a character with its own voice, personality, and memory. A user snaps a photo of an object; Auris identifies what it is and speaks as that object. Everything remembered is remembered across sessions.
 
 ## Core mechanics (shipping in the hackathon build)
 1. **Photograph to voice** — one tap captures a photo; within ~3 seconds a character voice greets the user.

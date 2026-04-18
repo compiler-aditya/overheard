@@ -1,8 +1,8 @@
-# Overheard
+# Auris
 
 > Photograph anything. Hear what it has to say.
 
-Overheard is a voice-first web app where any photograph becomes a character with its own voice, personality, and memory. Your couch speaks in a tired voice. The Taj Mahal speaks in first person about what it has seen. A pigeon on the sidewalk speaks like a New York wise-guy. Some objects remember you across days. And when you photograph two things together, sometimes a third, rare voice emerges that neither object has alone.
+Auris is a voice-first web app where any photograph becomes a character with its own voice, personality, and memory. Your couch speaks in a tired voice. The Taj Mahal speaks in first person about what it has seen. A pigeon on the sidewalk speaks like a New York wise-guy. Some objects remember you across days. And when you photograph two things together, sometimes a third, rare voice emerges that neither object has alone.
 
 Built for the [ElevenLabs × Kiro Hackathon](https://kiro.devpost.com) with Kiro's spec-driven development and ElevenLabs' audio APIs.
 

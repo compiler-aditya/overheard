@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Overheard character-db MCP server.
+ * Auris character-db MCP server.
  *
  * A minimal stdio MCP server that gives Kiro read-only access to the character
  * database so it can answer questions like "which voices do we already have?"
@@ -23,7 +23,7 @@ const TOOLS = [
   {
     name: "list_characters",
     description:
-      "List all characters currently in the Overheard database. Optionally filter by kind.",
+      "List all characters currently in the Auris database. Optionally filter by kind.",
     inputSchema: {
       type: "object",
       properties: {
@@ -92,7 +92,7 @@ async function handle(req) {
       return reply(id, {
         protocolVersion: PROTOCOL_VERSION,
         capabilities: { tools: {} },
-        serverInfo: { name: "overheard-character-db", version: "0.1.0" },
+        serverInfo: { name: "auris-character-db", version: "0.1.0" },
       });
     }
     if (method === "notifications/initialized") return; // notification, no reply

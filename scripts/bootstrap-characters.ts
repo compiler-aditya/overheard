@@ -140,7 +140,7 @@ async function createAgent(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      name: `overheard-${spec.kind}-${spec.slug}`.slice(0, 60),
+      name: `auris-${spec.kind}-${spec.slug}`.slice(0, 60),
       conversation_config: {
         agent: {
           prompt: { prompt },
@@ -155,7 +155,7 @@ async function createAgent(
         },
         asr: { quality: "high", provider: "elevenlabs" },
       },
-      tags: ["overheard", spec.kind, spec.slug],
+      tags: ["auris", spec.kind, spec.slug],
     }),
   });
   if (!res.ok) {

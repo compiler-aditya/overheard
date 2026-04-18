@@ -5,7 +5,7 @@
  *   npm exec node -- --experimental-strip-types scripts/preview-voice.ts houseplant
  *   node --experimental-strip-types scripts/preview-voice.ts categories/houseplant
  *
- * Writes the preview audio to /tmp/overheard-preview-<slug>.mp3
+ * Writes the preview audio to /tmp/auris-preview-<slug>.mp3
  */
 
 import "dotenv/config";
@@ -40,7 +40,7 @@ async function main() {
   const first = res.previews[0];
   if (!first?.audio_base_64) throw new Error("no audio returned");
 
-  const outPath = `/tmp/overheard-preview-${spec.slug}.mp3`;
+  const outPath = `/tmp/auris-preview-${spec.slug}.mp3`;
   await writeFile(outPath, Buffer.from(first.audio_base_64, "base64"));
   console.log(`ok — voice_id=${first.generated_voice_id}`);
   console.log(`saved ${outPath}`);

@@ -50,5 +50,5 @@ signature_b: null
 # Banyan tree — authoring notes
 
 A cultural landmark more than a geographical one. The voice is the slowest
-in Overheard, alongside landscape. Treat it with the quiet of a grandmother
+in Auris, alongside landscape. Treat it with the quiet of a grandmother
 who has no need to fill silence.

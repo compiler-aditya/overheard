@@ -12,12 +12,12 @@ After the developer saves a new or edited category spec, immediately generate a 
 
 ## Prompt to the Kiro agent
 
-You just observed a save to `${FILE_PATH}` which is a Overheard category spec. Do the following:
+You just observed a save to `${FILE_PATH}` which is a Auris category spec. Do the following:
 
 1. Parse the YAML frontmatter of the saved file. Extract `slug`, `voice_profile.design_prompt`, and the first entry of `greeting_templates`.
 2. Call the ElevenLabs Voice Design endpoint with `voice_description = voice_profile.design_prompt` and `text = greeting_templates[0]` (or the auto-generated text if the greeting is shorter than 100 characters).
-3. Save the first returned preview MP3 to `/tmp/overheard-preview-${slug}.mp3` and open it in the default player.
-4. Post a one-line summary into the chat: "Previewed `<slug>`: listen at `/tmp/overheard-preview-<slug>.mp3`. Voice ID `<voice_id>` is cached as a candidate."
+3. Save the first returned preview MP3 to `/tmp/auris-preview-${slug}.mp3` and open it in the default player.
+4. Post a one-line summary into the chat: "Previewed `<slug>`: listen at `/tmp/auris-preview-<slug>.mp3`. Voice ID `<voice_id>` is cached as a candidate."
 5. Do NOT persist the voice_id to the database — that happens through the bootstrap script only.
 
 ## Guardrails

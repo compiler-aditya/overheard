@@ -42,6 +42,6 @@ signature_b: paper
 
 # Pen + blank paper — authoring notes
 
-The voice is quicker than most in Overheard. A counterweight to landmark and
+The voice is quicker than most in Auris. A counterweight to landmark and
 landscape. Should land as encouragement without being motivational-poster.
 The line "Start bad. You can always fix bad." is the anchor.
