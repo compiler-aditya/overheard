@@ -21,6 +21,8 @@ function makeClient() {
       accessKeyId: requireEnv("R2_ACCESS_KEY_ID"),
       secretAccessKey: requireEnv("R2_SECRET_ACCESS_KEY"),
     },
+    // R2 rejects virtual-host-style signed GETs with 403. Path-style works.
+    forcePathStyle: true,
   });
 }
 
@@ -63,10 +65,19 @@ export async function getSignedDownloadUrl(
   );
 }
 
-/** Prefer the public base URL when configured, else a signed URL. */
+/**
+ * Return a URL the browser can GET for a stored object.
+ *
+ * Uses R2_PUBLIC_BASE_URL only when it's a real public host (custom domain
+ * or r2.dev subdomain). The `*.r2.cloudflarestorage.com` endpoint is the
+ * S3-compatible API — it requires AWS v4 signing and 400s without it,
+ * so we detect that case and fall back to short-lived signed GET URLs.
+ */
 export async function publicUrl(key: string): Promise<string> {
   const base = process.env.R2_PUBLIC_BASE_URL;
-  if (base) return `${base.replace(/\/$/, "")}/${key}`;
+  if (base && !base.includes("r2.cloudflarestorage.com")) {
+    return `${base.replace(/\/$/, "")}/${key}`;
+  }
   return getSignedDownloadUrl(key);
 }
 

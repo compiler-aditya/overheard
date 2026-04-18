@@ -2,6 +2,7 @@ import "server-only";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { queryOne } from "@/lib/db";
+import { publicUrl } from "@/lib/r2";
 import { loadAllSpecs } from "@/lib/specs/loader";
 import { ConverseButton } from "@/components/ConverseButton";
 import { EncounterPlayer } from "@/components/EncounterPlayer";
@@ -17,8 +18,8 @@ export default async function PairRevealPage({ params, searchParams }: PageProps
   const { id } = await params;
   const sp = await searchParams;
 
-  const row = await queryOne<{ pair_slug: string }>(
-    `SELECT ps.slug AS pair_slug
+  const row = await queryOne<{ pair_slug: string; photo_r2_key: string | null }>(
+    `SELECT ps.slug AS pair_slug, pi.photo_r2_key
        FROM pair_instances pi
        JOIN pair_specs ps ON ps.id = pi.pair_spec_id
       WHERE pi.id = $1`,
@@ -32,6 +33,10 @@ export default async function PairRevealPage({ params, searchParams }: PageProps
     ? specs.pairings.get(row.pair_slug)
     : specs?.pairings.get("candle-mirror");
   if (!spec) notFound();
+
+  const photoUrl = row?.photo_r2_key
+    ? await publicUrl(row.photo_r2_key).catch(() => null)
+    : null;
 
   const [titleA, titleB] = splitTitle(spec.display_name);
 
@@ -103,10 +108,11 @@ export default async function PairRevealPage({ params, searchParams }: PageProps
 
       <aside className="relative overflow-hidden min-h-[320px]">
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 bg-cover bg-center"
           style={{
-            background:
-              "radial-gradient(80% 60% at 70% 50%, #ebb56d 0%, #a05a2c 35%, #2a1a10 85%, #0a0906 100%)",
+            background: photoUrl
+              ? `url("${photoUrl}") center/cover no-repeat, radial-gradient(80% 60% at 70% 50%, #ebb56d 0%, #a05a2c 35%, #2a1a10 85%, #0a0906 100%)`
+              : "radial-gradient(80% 60% at 70% 50%, #ebb56d 0%, #a05a2c 35%, #2a1a10 85%, #0a0906 100%)",
           }}
         />
         <div

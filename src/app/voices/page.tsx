@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { query, getDemoUserId } from "@/lib/db";
+import { publicUrl } from "@/lib/r2";
 import { loadAllSpecs } from "@/lib/specs/loader";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,8 @@ interface VoiceCard {
   quote: string;
   kind: "Category" | "Landmark" | "Pair unlock";
   when: string;
-  cover: string;
+  cover: string;              // gradient fallback
+  photo_url?: string;         // the user's original photo, when present
   pair?: boolean;
 }
 
@@ -64,7 +66,14 @@ export default async function VoicesPage() {
                   (c.pair ? "border-rustsoft" : "border-line")
                 }
               >
-                <div className="aspect-square relative overflow-hidden" style={{ background: c.cover }}>
+                <div
+                  className="aspect-square relative overflow-hidden bg-cover bg-center"
+                  style={{
+                    background: c.photo_url
+                      ? `url("${c.photo_url}") center/cover no-repeat, ${c.cover}`
+                      : c.cover,
+                  }}
+                >
                   {c.pair && (
                     <div
                       className="absolute inset-0 z-[1]"
@@ -159,10 +168,11 @@ async function fetchCards(): Promise<VoiceCard[]> {
       id: string;
       category: string;
       display_name: string | null;
+      image_r2_key: string;
       created_at: string;
       last_seen_at: string;
     }>(
-      `SELECT id, category, display_name, created_at, last_seen_at
+      `SELECT id, category, display_name, image_r2_key, created_at, last_seen_at
          FROM objects
         WHERE user_id = $1
         ORDER BY last_seen_at DESC
@@ -170,8 +180,13 @@ async function fetchCards(): Promise<VoiceCard[]> {
       [userId],
     );
 
-    const pairInstances = await query<{ id: string; slug: string; unlocked_at: string }>(
-      `SELECT pi.id, ps.slug, pi.unlocked_at
+    const pairInstances = await query<{
+      id: string;
+      slug: string;
+      photo_r2_key: string;
+      unlocked_at: string;
+    }>(
+      `SELECT pi.id, ps.slug, pi.photo_r2_key, pi.unlocked_at
          FROM pair_instances pi
          JOIN pair_specs ps ON ps.id = pi.pair_spec_id
         WHERE pi.user_id = $1
@@ -180,21 +195,31 @@ async function fetchCards(): Promise<VoiceCard[]> {
       [userId],
     );
 
+    // Resolve all R2 keys → URLs in parallel so the grid renders the actual
+    // photos the user took (not just gradients).
+    const objectUrls = await Promise.all(
+      objects.map((o) => publicUrl(o.image_r2_key).catch(() => undefined)),
+    );
+    const pairUrls = await Promise.all(
+      pairInstances.map((p) => publicUrl(p.photo_r2_key).catch(() => undefined)),
+    );
+
     const cards: VoiceCard[] = [];
 
-    for (const o of objects) {
+    objects.forEach((o, i) => {
       const spec = specs.categories.get(o.category);
       cards.push({
         id: o.id,
-        name: spec?.display_name ?? o.display_name ?? o.category,
+        name: o.display_name ?? spec?.display_name ?? o.category,
         quote: spec?.greeting_templates[0] ?? "Hello.",
         kind: "Category",
         when: relTime(o.last_seen_at),
         cover: coverForCategory(o.category),
+        photo_url: objectUrls[i],
       });
-    }
+    });
 
-    for (const p of pairInstances) {
+    pairInstances.forEach((p, i) => {
       const spec = specs.pairings.get(p.slug);
       cards.push({
         id: p.id,
@@ -203,9 +228,10 @@ async function fetchCards(): Promise<VoiceCard[]> {
         kind: "Pair unlock",
         when: relTime(p.unlocked_at),
         cover: "radial-gradient(60% 50% at 30% 50%,#c44a2b 0%,#661f0f 50%,#0a0906 100%)",
+        photo_url: pairUrls[i],
         pair: true,
       });
-    }
+    });
 
     return cards;
   } catch (err) {

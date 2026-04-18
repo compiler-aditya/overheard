@@ -136,11 +136,14 @@ function GreetingMoment({
 // PROFILE SPREAD — magazine view for return visits (from /voices)
 // ────────────────────────────────────────────────────────────────
 function ProfileSpread({ view }: { view: CharacterView }) {
+  const bg = view.photo_url
+    ? `url("${view.photo_url}") center/cover no-repeat, ${view.cover_style}`
+    : view.cover_style;
   return (
     <div className="min-h-screen grid lg:grid-cols-[1.1fr_1fr]">
       <section
         className="relative overflow-hidden min-h-[360px]"
-        style={{ background: view.cover_style }}
+        style={{ background: bg }}
       >
         <div
           className="absolute inset-0"
