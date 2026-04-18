@@ -119,10 +119,13 @@ async function upsertPairSpec(db: pg.Client, spec: CharacterSpec, apiKey: string
 
 async function ensureVoice(spec: CharacterSpec, _apiKey: string): Promise<string> {
   if (spec.voice_profile.voice_id_override) return spec.voice_profile.voice_id_override;
+  const firstGreeting = spec.greeting_templates[0];
+  const useAuthoredPreview = firstGreeting && firstGreeting.length >= 100;
   const { voice_id } = await designAndPickFirst({
     description: spec.voice_profile.design_prompt,
-    preview_text: spec.greeting_templates[0],
+    preview_text: useAuthoredPreview ? firstGreeting : undefined,
     model_id: spec.voice_profile.model_id,
+    voice_name: `auris-${spec.kind}-${spec.slug}`,
   });
   return voice_id;
 }
@@ -149,7 +152,8 @@ async function createAgent(
         },
         tts: {
           voice_id,
-          model_id: "eleven_flash_v2_5",
+          // Conversational AI English agents require turbo_v2 or flash_v2 (not v2_5).
+          model_id: "eleven_flash_v2",
           stability: 0.5,
           similarity_boost: 0.75,
         },

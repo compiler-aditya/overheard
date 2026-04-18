@@ -32,9 +32,11 @@ async function main() {
   }
 
   console.log(`previewing ${spec.kind}/${spec.slug} — "${spec.voice_profile.design_prompt.slice(0, 80).replace(/\s+/g, " ")}..."`);
+  const firstGreeting = spec.greeting_templates[0];
+  const useAuthoredPreview = firstGreeting && firstGreeting.length >= 100;
   const res = await designVoice({
     description: spec.voice_profile.design_prompt,
-    preview_text: spec.greeting_templates[0],
+    preview_text: useAuthoredPreview ? firstGreeting : undefined,
     model_id: spec.voice_profile.model_id,
   });
   const first = res.previews[0];

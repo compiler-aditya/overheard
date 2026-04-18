@@ -90,10 +90,16 @@ export async function resolveCharacter(
   if (!spec) {
     throw new Error(`no category spec for "${categorySlug}"`);
   }
+  // Voice Design requires preview_text to be 100-1000 chars; our hand-authored
+  // greetings are typically ~50. Fall back to auto-generated preview text when
+  // the greeting is too short.
+  const firstGreeting = spec.greeting_templates[0];
+  const useAuthoredPreview = firstGreeting && firstGreeting.length >= 100;
   const { voice_id } = await designAndPickFirst({
     description: spec.voice_profile.design_prompt,
-    preview_text: spec.greeting_templates[0],
+    preview_text: useAuthoredPreview ? firstGreeting : undefined,
     model_id: spec.voice_profile.model_id,
+    voice_name: `auris-${spec.slug}-${fp.slice(0, 8)}`,
   });
   const { agent_id } = await createAgent(spec, voice_id);
   const ambient = await generateSoundEffect({

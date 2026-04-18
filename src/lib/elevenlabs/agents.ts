@@ -33,7 +33,8 @@ export async function createAgent(
         },
         tts: {
           voice_id,
-          model_id: "eleven_flash_v2_5",
+          // Conversational AI English agents require turbo_v2 or flash_v2 (not v2_5).
+          model_id: "eleven_flash_v2",
           stability: 0.5,
           similarity_boost: 0.75,
         },
