@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "character-db": {
+      "command": "node",
+      "args": ["./mcp-servers/character-db/dist/server.js"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}"
+      },
+      "autoApprove": ["list_characters", "get_character_by_slug", "check_voice_uniqueness"],
+      "disabled": false
+    }
+  },
+  "powers": {
+    "@elevenlabs/elevenlabs": {
+      "note": "ElevenLabs Kiro Power — install via kiro.dev/launch/powers/elevenlabs. Provides dynamic context on Voice Design, TTS, Conversational AI, Sound Effects, and Music APIs."
+    }
+  }
+}
