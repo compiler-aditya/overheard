@@ -13,12 +13,13 @@
     "test": "vitest run",
     "db:migrate": "node --experimental-strip-types scripts/run-migrations.ts",
     "bootstrap": "node --experimental-strip-types scripts/bootstrap-characters.ts",
-    "seed": "node --experimental-strip-types scripts/seed-demo.ts"
+    "preview": "node --experimental-strip-types scripts/preview-voice.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.665.0",
     "@aws-sdk/s3-request-presigner": "^3.665.0",
     "@elevenlabs/client": "^0.1.6",
+    "dotenv": "^16.4.5",
     "gray-matter": "^4.0.3",
     "next": "^15.5.0",
     "pg": "^8.13.1",

@@ -1,4 +1,3 @@
-import "server-only";
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import matter from "gray-matter";
