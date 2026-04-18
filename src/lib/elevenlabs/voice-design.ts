@@ -1,5 +1,3 @@
-import "server-only";
-
 const API_BASE = "https://api.elevenlabs.io";
 const DESIGN_URL = `${API_BASE}/v1/text-to-voice/design`;
 const CREATE_URL = `${API_BASE}/v1/text-to-voice`;

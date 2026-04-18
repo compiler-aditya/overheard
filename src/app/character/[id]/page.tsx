@@ -1,14 +1,15 @@
 import "server-only";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { query, queryOne } from "@/lib/db";
+import { queryOne } from "@/lib/db";
+import { publicUrl } from "@/lib/r2";
 import { loadAllSpecs } from "@/lib/specs/loader";
 import { ConverseButton } from "@/components/ConverseButton";
 import { EncounterPlayer } from "@/components/EncounterPlayer";
 
 interface PageProps {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ g?: string; a?: string; t?: string }>;
+  searchParams: Promise<{ g?: string; a?: string; t?: string; profile?: string }>;
 }
 
 export const dynamic = "force-dynamic";
@@ -17,10 +18,7 @@ interface CharacterView {
   id: string;
   kind: "category" | "landmark";
   display_name: string;
-  category_slug?: string;
-  landmark_slug?: string;
-  first_met?: string;
-  visits?: number;
+  photo_url?: string;
   mood?: string;
   quotes: { when: string; q: string; now?: boolean }[];
   cover_style: string;
@@ -32,16 +30,118 @@ export default async function CharacterPage({ params, searchParams }: PageProps)
   const view = await resolveView(id);
   if (!view) notFound();
 
-  const [titleA, titleB] = splitTitle(view.display_name);
-  const greetingUrl = sp?.g;
-  const ambientUrl = sp?.a;
-  const greetingText = sp?.t;
-  const hasFreshEncounter = Boolean(greetingUrl);
+  const freshGreeting = sp?.g;
+  const freshAmbient = sp?.a;
+  const freshText = sp?.t;
+  // Fresh encounter (?g= present) → greeting moment
+  // Explicit ?profile=1 → magazine spread for return visits
+  const isFreshEncounter = Boolean(freshGreeting) && sp?.profile !== "1";
+
+  return isFreshEncounter ? (
+    <GreetingMoment
+      view={view}
+      greetingUrl={freshGreeting}
+      ambientUrl={freshAmbient}
+      greetingText={freshText ?? view.quotes[0]?.q}
+    />
+  ) : (
+    <ProfileSpread view={view} />
+  );
+}
+
+// ────────────────────────────────────────────────────────────────
+// GREETING MOMENT — what you see immediately after a photo.
+// Full-bleed, photo backdrop, character name, one spoken line,
+// auto-playing audio, Talk back. No stats. No timeline.
+// ────────────────────────────────────────────────────────────────
+function GreetingMoment({
+  view,
+  greetingUrl,
+  ambientUrl,
+  greetingText,
+}: {
+  view: CharacterView;
+  greetingUrl?: string;
+  ambientUrl?: string;
+  greetingText?: string;
+}) {
+  const bg = view.photo_url
+    ? `url("${view.photo_url}") center/cover no-repeat, ${view.cover_style}`
+    : view.cover_style;
 
   return (
+    <div
+      className="relative min-h-[100svh] overflow-hidden text-[#f5efe0]"
+      style={{ background: bg }}
+    >
+      {/* scrim for legibility */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(14,13,11,0.25) 0%, rgba(14,13,11,0.65) 60%, rgba(14,13,11,0.92) 100%)",
+        }}
+      />
+
+      {/* top bar */}
+      <div className="relative px-6 md:px-10 pt-6 md:pt-8 flex justify-between items-center z-10">
+        <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition">
+          <span className="w-2 h-2 rounded-full bg-rust" />
+          <span className="font-display italic text-xl md:text-2xl">Auris</span>
+        </Link>
+        <div className="font-mono text-[10px] tracking-[0.22em] uppercase opacity-60">
+          {view.kind === "landmark" ? "landmark" : "category"}
+        </div>
+      </div>
+
+      {/* centered stage */}
+      <main className="relative z-10 min-h-[calc(100svh-120px)] flex flex-col items-center justify-center px-6 md:px-12 text-center">
+        <div className="font-mono text-[11px] tracking-[0.32em] uppercase opacity-70 mb-5">
+          {view.kind === "landmark"
+            ? "Landmark · speaks in first person"
+            : "A voice met just now"}
+        </div>
+        <h1 className="font-display font-normal text-5xl sm:text-6xl md:text-[92px] leading-[0.95] tracking-[-0.03em] max-w-[900px]">
+          {view.display_name}
+        </h1>
+        <blockquote className="font-display italic text-xl md:text-3xl leading-[1.35] mt-8 max-w-[720px] opacity-90">
+          &ldquo;{greetingText ?? view.quotes[0]?.q ?? ""}&rdquo;
+        </blockquote>
+
+        <div className="mt-10 md:mt-14 flex flex-col items-center gap-4">
+          <EncounterPlayer
+            greetingUrl={greetingUrl}
+            ambientUrl={ambientUrl}
+            greetingText={greetingText ?? view.quotes[0]?.q}
+            tone="light"
+          />
+          <ConverseButton characterId={view.id} tone="light" />
+        </div>
+      </main>
+
+      <footer className="relative z-10 px-6 md:px-10 pb-6 flex justify-between items-center font-mono text-[10px] tracking-[0.22em] uppercase opacity-50">
+        <Link href="/" className="hover:opacity-100">← home</Link>
+        <Link
+          href={`/character/${view.id}?profile=1`}
+          className="hover:opacity-100 hidden sm:inline"
+        >
+          see profile →
+        </Link>
+      </footer>
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────
+// PROFILE SPREAD — magazine view for return visits (from /voices)
+// ────────────────────────────────────────────────────────────────
+function ProfileSpread({ view }: { view: CharacterView }) {
+  return (
     <div className="min-h-screen grid lg:grid-cols-[1.1fr_1fr]">
-      {/* VISUAL column (the photo + eyebrow + name) */}
-      <section className="relative overflow-hidden min-h-[420px]" style={{ background: view.cover_style }}>
+      <section
+        className="relative overflow-hidden min-h-[360px]"
+        style={{ background: view.cover_style }}
+      >
         <div
           className="absolute inset-0"
           style={{
@@ -56,24 +156,14 @@ export default async function CharacterPage({ params, searchParams }: PageProps)
         <div className="absolute bottom-10 left-10 right-10 text-[#f5efe0] z-[2]">
           <div className="font-mono text-[11px] tracking-[0.28em] uppercase text-[#d89a5a] mb-3.5">
             {view.kind === "landmark" ? "Landmark" : "Category"}
-            {view.kind === "landmark" && " · Heritage"}
           </div>
-          <h1 className="font-display font-normal text-5xl md:text-[84px] leading-[0.9] tracking-[-0.025em]">
-            {titleA}
-            {titleB && (
-              <>
-                , <em className="italic">{titleB}</em>
-              </>
-            )}
+          <h1 className="font-display font-normal text-5xl md:text-[76px] leading-[0.9] tracking-[-0.025em]">
+            {view.display_name}
           </h1>
-          <div className="mt-3.5 font-display italic text-base md:text-lg" style={{ color: "rgba(245,239,224,0.85)" }}>
-            &ldquo;{greetingText ?? view.quotes[0]?.q ?? ""}&rdquo;
-          </div>
         </div>
       </section>
 
-      {/* DETAIL column */}
-      <section className="p-9 md:p-10 flex flex-col gap-5.5 relative">
+      <section className="p-9 md:p-10 flex flex-col gap-6">
         <Link
           href="/voices"
           className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-ink3 hover:text-ink self-start"
@@ -81,46 +171,40 @@ export default async function CharacterPage({ params, searchParams }: PageProps)
           ← back to shelf
         </Link>
 
-        <div className="grid grid-cols-3 gap-5 py-4.5 border-t border-b border-line">
-          <Stat k="first met" v={view.first_met ?? "today"} />
-          <Stat k="visits" v={String(view.visits ?? 1)} />
-          <Stat k="mood" v={view.mood ?? "warm"} />
-        </div>
-
-        <div>
-          <h3 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink3 m-0 mb-2.5">
-            What {pronoun(view.kind)} said
-          </h3>
-          <div className="flex flex-col gap-3.5">
-            {view.quotes.map((q, i) => (
-              <div
-                key={i}
-                className="pl-4 border-l"
-                style={{ borderColor: q.now ? "var(--accent)" : "var(--line)" }}
-              >
-                <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink3 mb-1">
-                  {q.when}
-                </div>
-                <div
-                  className="font-display italic text-[17px] leading-[1.35]"
-                  style={{ color: q.now ? "var(--ink)" : "var(--ink-2)" }}
-                >
-                  &ldquo;{q.q}&rdquo;
-                </div>
-              </div>
-            ))}
+        {view.mood && (
+          <div className="py-4 border-t border-b border-line">
+            <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink3">mood</div>
+            <div className="font-display italic text-[22px] leading-tight text-ink mt-1">
+              {view.mood}
+            </div>
           </div>
-        </div>
-
-        {hasFreshEncounter && (
-          <EncounterPlayer
-            greetingUrl={greetingUrl}
-            ambientUrl={ambientUrl}
-            greetingText={greetingText}
-          />
         )}
 
-        <div className="mt-auto pt-4.5">
+        {view.quotes.length > 0 && (
+          <div>
+            <h3 className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink3 m-0 mb-2.5">
+              What they said
+            </h3>
+            <div className="flex flex-col gap-3.5">
+              {view.quotes.map((q, i) => (
+                <div
+                  key={i}
+                  className="pl-4 border-l"
+                  style={{ borderColor: q.now ? "var(--accent)" : "var(--line)" }}
+                >
+                  <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink3 mb-1">
+                    {q.when}
+                  </div>
+                  <div className="font-display italic text-[17px] leading-[1.35] text-ink2">
+                    &ldquo;{q.q}&rdquo;
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mt-auto pt-4">
           <ConverseButton characterId={view.id} variant="flush" />
         </div>
       </section>
@@ -128,75 +212,41 @@ export default async function CharacterPage({ params, searchParams }: PageProps)
   );
 }
 
-function Stat({ k, v }: { k: string; v: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-ink3">{k}</div>
-      <div className="font-display italic text-[22px] leading-none text-ink">{v}</div>
-    </div>
-  );
-}
-
-function pronoun(kind: CharacterView["kind"]): string {
-  return kind === "landmark" ? "it" : "they";
-}
-
-function splitTitle(title: string): [string, string | null] {
-  // "Rajwada, at dusk" pattern: split on a comma first, else last word.
-  if (title.includes(",")) {
-    const [a, ...rest] = title.split(",");
-    return [a!.trim(), rest.join(",").trim() || null];
-  }
-  const parts = title.trim().split(/\s+/);
-  if (parts.length < 2) return [title, null];
-  const last = parts.pop()!;
-  return [parts.join(" "), last];
-}
-
 async function resolveView(id: string): Promise<CharacterView | null> {
-  // Try real DB first
   const specs = await loadAllSpecs().catch(() => null);
 
   const obj = await queryOne<{
     id: string;
     category: string;
     display_name: string | null;
-    created_at: string;
+    image_r2_key: string;
   }>(
-    `SELECT id, category, display_name, created_at FROM objects WHERE id = $1`,
+    `SELECT id, category, display_name, image_r2_key FROM objects WHERE id = $1`,
     [id],
   ).catch(() => null);
 
   if (obj && specs) {
     const spec = specs.categories.get(obj.category);
-    const convs = await query<{ created_at: string; transcript: unknown }>(
-      `SELECT created_at, transcript FROM conversations WHERE object_id = $1 ORDER BY created_at DESC LIMIT 3`,
-      [obj.id],
-    ).catch(() => []);
-
+    const photoUrl = await publicUrl(obj.image_r2_key).catch(() => undefined);
     return {
       id: obj.id,
       kind: "category",
       display_name: spec?.display_name ?? obj.display_name ?? obj.category,
-      first_met: fmtDate(obj.created_at),
-      visits: convs.length || 1,
+      photo_url: photoUrl,
       mood: spec?.personality.emotional_baseline,
       cover_style: coverForCategory(obj.category),
-      quotes: [
-        { when: "today · now", q: spec?.greeting_templates[0] ?? "Hello.", now: true },
-        ...(spec?.greeting_templates.slice(1, 3) ?? []).map((q, i) => ({
-          when: ["yesterday", "earlier this week"][i] ?? "earlier",
-          q,
-        })),
-      ],
+      quotes: (spec?.greeting_templates ?? ["Hello."]).slice(0, 3).map((q, i) => ({
+        when: i === 0 ? "today" : ["earlier", "last time"][i - 1] ?? "before",
+        q,
+        now: i === 0,
+      })),
     };
   }
 
-  const lm = await queryOne<{
-    id: string;
-    slug: string;
-    name: string;
-  }>(`SELECT id, slug, name FROM landmarks WHERE id = $1`, [id]).catch(() => null);
+  const lm = await queryOne<{ id: string; slug: string; name: string }>(
+    `SELECT id, slug, name FROM landmarks WHERE id = $1`,
+    [id],
+  ).catch(() => null);
 
   if (lm && specs) {
     const spec = specs.landmarks.get(lm.slug);
@@ -204,47 +254,17 @@ async function resolveView(id: string): Promise<CharacterView | null> {
       id: lm.id,
       kind: "landmark",
       display_name: spec?.display_name ?? lm.name,
-      first_met: "recently",
-      visits: 1,
       mood: spec?.personality.emotional_baseline,
       cover_style: coverForLandmark(lm.slug),
       quotes: (spec?.greeting_templates ?? ["Hello."]).slice(0, 3).map((q, i) => ({
-        when: i === 0 ? "today · now" : ["yesterday", "this week"][i - 1] ?? "earlier",
+        when: i === 0 ? "today" : ["earlier", "last time"][i - 1] ?? "before",
         q,
         now: i === 0,
       })),
     };
   }
 
-  // Fallback: demo view so the design is reviewable without DB
-  if (!specs) return null;
-  const fallbackSpec =
-    specs.landmarks.get("rajwada-indore") ?? specs.categories.get("houseplant");
-  if (!fallbackSpec) return null;
-
-  return {
-    id,
-    kind: fallbackSpec.kind === "landmark" ? "landmark" : "category",
-    display_name: "Rajwada, at dusk",
-    first_met: "11 apr",
-    visits: 4,
-    mood: "warm, weary",
-    cover_style: coverForLandmark("rajwada-indore"),
-    quotes: [
-      { when: "today · 12 min ago", q: "another one with a phone. come closer — the light is better by the carved pillars.", now: true },
-      { when: "mon · 14 apr", q: "the pillars hold a different weight at dusk. come back when the crows return." },
-      { when: "fri · 11 apr", q: "you didn't look up. do. the ceiling is where I keep 1801." },
-    ],
-  };
-}
-
-function fmtDate(iso: string): string {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }).toLowerCase();
-  } catch {
-    return "today";
-  }
+  return null;
 }
 
 function coverForCategory(cat: string): string {
@@ -254,14 +274,28 @@ function coverForCategory(cat: string): string {
     food: "radial-gradient(70% 60% at 50% 50%, #e0c9a8 0%, #8a5d3a 60%, #3a1f10 100%)",
     appliance: "radial-gradient(70% 60% at 40% 40%, #bfc9d0 0%, #4b5359 60%, #1a1d20 100%)",
     furniture: "radial-gradient(70% 60% at 50% 50%, #e8dac4 0%, #9a8369 60%, #2f271e 100%)",
+    vehicle: "radial-gradient(70% 60% at 50% 50%, #9aa7b3 0%, #3f4e5a 60%, #14191f 100%)",
+    tool: "radial-gradient(70% 60% at 50% 50%, #b0a090 0%, #5a4a3a 60%, #1a1410 100%)",
+    accessory: "radial-gradient(70% 60% at 50% 50%, #d7c9b3 0%, #8a6d52 60%, #2a1f14 100%)",
+    building: "radial-gradient(70% 60% at 50% 50%, #cbb89a 0%, #705838 60%, #1f150a 100%)",
+    landscape: "radial-gradient(70% 60% at 50% 50%, #a8c0a6 0%, #3e5b3d 60%, #0f1f14 100%)",
+    "street-object": "radial-gradient(70% 60% at 50% 50%, #9aa0a5 0%, #464c52 60%, #14171a 100%)",
+    artwork: "radial-gradient(70% 60% at 50% 50%, #d0a878 0%, #6e4a26 60%, #20140a 100%)",
   };
   return m[cat] ?? "radial-gradient(70% 60% at 40% 40%, #86a674 0%, #2e4a2c 70%, #14201a 100%)";
 }
+
 function coverForLandmark(slug: string): string {
   const m: Record<string, string> = {
     "rajwada-indore": "linear-gradient(160deg, #f1c486 0%, #c46d2f 45%, #4a1f0c 100%)",
     "taj-mahal": "radial-gradient(60% 50% at 50% 30%, #ffd97a 0%, #8a521e 55%, #251308 100%)",
     "banyan-tree": "radial-gradient(70% 60% at 50% 50%, #6b8a5f 0%, #2e3f2a 60%, #14201a 100%)",
+    "gateway-of-india": "radial-gradient(70% 60% at 50% 50%, #c8a878 0%, #5a4028 60%, #180e08 100%)",
+    "red-fort": "radial-gradient(70% 60% at 50% 50%, #b55838 0%, #6a2818 60%, #1a0808 100%)",
+    "chai-stall": "radial-gradient(70% 60% at 50% 50%, #c89668 0%, #5a3818 60%, #1a0e08 100%)",
+    "arabian-sea": "radial-gradient(70% 60% at 50% 50%, #7a98b4 0%, #2a4358 60%, #08141f 100%)",
+    "indian-railway-station":
+      "radial-gradient(70% 60% at 50% 50%, #a89878 0%, #4a3828 60%, #18100a 100%)",
   };
   return m[slug] ?? "linear-gradient(160deg, #f1c486 0%, #c46d2f 45%, #4a1f0c 100%)";
 }

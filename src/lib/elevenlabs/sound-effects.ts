@@ -1,5 +1,3 @@
-import "server-only";
-
 const API = "https://api.elevenlabs.io/v1/sound-generation";
 
 export interface SoundEffectsInput {
